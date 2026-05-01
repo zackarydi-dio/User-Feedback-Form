@@ -1,77 +1,84 @@
-const form = document.getElementById("feedback-form");
-const inputs = document.querySelectorAll(".input-field");
-const charCount = document.getElementById("char-count");
-const comments = document.getElementById("comments");
+// ===== DOM Element Selection =====
+const feedbackForm = document.getElementById("feedback-form");
+const inputFields = document.querySelectorAll(".input-field");
+const characterCountDisplay = document.getElementById("char-count");
+const commentsTextarea = document.getElementById("comments");
 const validationMessage = document.getElementById("validation-message");
-const feedbackDisplay = document.getElementById("feedback-display");
+const feedbackDisplayContainer = document.getElementById("feedback-display");
 
-if (!form || !charCount || !comments || !validationMessage || !feedbackDisplay) {
+// ===== Validation: Check if all required elements exist =====
+if (!feedbackForm || !characterCountDisplay || !commentsTextarea || !validationMessage || !feedbackDisplayContainer) {
     console.error("Required DOM elements not found. Check your HTML structure.");
 }
 
-if (comments && charCount) {
-    comments.addEventListener("input", function(){
-        charCount.textContent = "Characters: " + comments.value.length;
+// ===== Feature: Real-time Character Counter =====
+if (commentsTextarea && characterCountDisplay) {
+    commentsTextarea.addEventListener("input", function() {
+        characterCountDisplay.textContent = "Characters: " + commentsTextarea.value.length;
     });
 }
 
-if (form) {
-    form.addEventListener("mouseover", function(event){
-        if(event.target.classList.contains("input-field")){
+// ===== Feature: Tooltip Display on Hover =====
+if (feedbackForm) {
+    feedbackForm.addEventListener("mouseover", function(event) {
+        if (event.target.classList.contains("input-field")) {
             const tooltip = event.target.nextElementSibling;
-            if(tooltip && tooltip.classList.contains("tooltip")){
+            if (tooltip && tooltip.classList.contains("tooltip")) {
                 tooltip.classList.add("show");
             }
         }
     });
 
-    form.addEventListener("mouseout", function(event){
-        if(event.target.classList.contains("input-field")){
+    feedbackForm.addEventListener("mouseout", function(event) {
+        if (event.target.classList.contains("input-field")) {
             const tooltip = event.target.nextElementSibling;
-            if(tooltip && tooltip.classList.contains("tooltip")){
+            if (tooltip && tooltip.classList.contains("tooltip")) {
                 tooltip.classList.remove("show");
             }
         }
     });
 }
 
-if (form) {
-    form.addEventListener("submit", function(event){
+// ===== Feature: Form Submission and Feedback Display =====
+if (feedbackForm) {
+    feedbackForm.addEventListener("submit", function(event) {
         event.preventDefault();
 
-        let name = document.getElementById("name").value.trim();
-        let email = document.getElementById("email").value.trim();
-        let comment = comments.value.trim();
+        // Get form values and trim whitespace
+        const userName = document.getElementById("name").value.trim();
+        const userEmail = document.getElementById("email").value.trim();
+        const userComment = commentsTextarea.value.trim();
 
-        if(name === "" || email === "" || comment === ""){
+        // Validate that all fields are filled
+        if (userName === "" || userEmail === "" || userComment === "") {
             validationMessage.textContent = "Please fill in all fields.";
             return;
         }
 
+        // Clear previous validation messages
         validationMessage.textContent = "";
 
-        let entry = document.createElement("div");
-        entry.classList.add("feedback-entry");
+        // Create a new feedback entry element
+        const feedbackEntry = document.createElement("div");
+        feedbackEntry.classList.add("feedback-entry");
 
-        entry.innerHTML = `
-            <strong>Name:</strong> ${name}<br>
-            <strong>Email:</strong> ${email}<br>
-            <strong>Comment:</strong> ${comment}
+        feedbackEntry.innerHTML = `
+            <strong>Name:</strong> ${userName}<br>
+            <strong>Email:</strong> ${userEmail}<br>
+            <strong>Comment:</strong> ${userComment}
         `;
 
-        feedbackDisplay.appendChild(entry);
+        // Append the new entry to the feedback display
+        feedbackDisplayContainer.appendChild(feedbackEntry);
 
-        form.reset();
-        charCount.textContent = "Characters: 0";
+        // Reset form and character counter
+        feedbackForm.reset();
+        characterCountDisplay.textContent = "Characters: 0";
     });
-}
 
-document.body.addEventListener("click", function(){
-    console.log("Background clicked");
-});
-
-if (form) {
-    form.addEventListener("click", function(event){
+    // ===== Feature: Event Propagation Control =====
+    // Prevent click events from bubbling up to the document body
+    feedbackForm.addEventListener("click", function(event) {
         event.stopPropagation();
     });
 }
